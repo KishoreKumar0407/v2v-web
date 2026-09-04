@@ -144,9 +144,10 @@ const transporter = nodemailer.createTransport({
 });
 
 // API STATUS
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.json({ message: "V2V API is running..." });
 });
+
 
 // GET all messages (For Admin Dashboard)
 app.get('/api/messages', async (req, res) => {
