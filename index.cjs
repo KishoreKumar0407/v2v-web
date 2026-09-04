@@ -1280,6 +1280,14 @@ if (fs.existsSync(distPath)) {
 
 
 
+app.use((err, req, res, next) => {
+    console.error('Unhandled server error:', err);
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.status(err.status || 500).json({ error: err.message || 'Internal Server Error' });
+});
+
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`V2V Server running on port ${PORT}`);
@@ -1287,4 +1295,5 @@ if (require.main === module) {
 }
 
 module.exports = app;
+
 
