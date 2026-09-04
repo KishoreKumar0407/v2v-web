@@ -10,8 +10,9 @@ const isPostgresConfigured = Boolean(databaseUrl) &&
     !databaseUrl.includes('ep-shiny-bar');
 
 if (isProduction && !isPostgresConfigured) {
-    throw new Error('A valid POSTGRES_URL or DATABASE_URL is required in production.');
+    console.warn('WARNING: Neither POSTGRES_URL nor DATABASE_URL is configured in production. Falling back to local SQLite adapter.');
 }
+
 
 let pool;
 let mode = 'sqlite';
