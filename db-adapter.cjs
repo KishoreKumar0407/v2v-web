@@ -42,18 +42,31 @@ if (isPostgresConfigured) {
                     id SERIAL PRIMARY KEY,
                     email TEXT UNIQUE NOT NULL,
                     password TEXT NOT NULL,
+                    name TEXT DEFAULT '',
+                    image TEXT DEFAULT '',
+                    role TEXT DEFAULT 'CO_FOUNDER',
+                    can_manage_blogs BOOLEAN DEFAULT FALSE,
+                    can_manage_experiments BOOLEAN DEFAULT FALSE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             `);
-            if (process.env.INITIAL_ADMIN_EMAIL && process.env.INITIAL_ADMIN_PASSWORD) {
-                const initialAdminPassword = await bcrypt.hash(process.env.INITIAL_ADMIN_PASSWORD, 12);
-                await pool.query(
-                    `INSERT INTO admin_users (email, password, name, role, can_manage_blogs, can_manage_experiments)
-                     VALUES ($1, $2, $3, 'MAIN_ADMIN', TRUE, TRUE)
-                     ON CONFLICT (email) DO NOTHING`,
-                    [process.env.INITIAL_ADMIN_EMAIL, initialAdminPassword, process.env.INITIAL_ADMIN_NAME || process.env.INITIAL_ADMIN_EMAIL.split('@')[0]]
-                );
-            }
+            await pool.query(`ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS name TEXT DEFAULT ''`).catch(() => {});
+            await pool.query(`ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS image TEXT DEFAULT ''`).catch(() => {});
+            await pool.query(`ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'CO_FOUNDER'`).catch(() => {});
+            await pool.query(`ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS can_manage_blogs BOOLEAN DEFAULT FALSE`).catch(() => {});
+            await pool.query(`ALTER TABLE admin_users ADD COLUMN IF NOT EXISTS can_manage_experiments BOOLEAN DEFAULT FALSE`).catch(() => {});
+
+            const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'admin@v2v.com';
+            const adminPass = process.env.INITIAL_ADMIN_PASSWORD || 'Admin@123456';
+            const adminName = process.env.INITIAL_ADMIN_NAME || 'Main Admin';
+            const initialAdminPassword = await bcrypt.hash(adminPass, 12);
+            await pool.query(
+                `INSERT INTO admin_users (email, password, name, role, can_manage_blogs, can_manage_experiments)
+                 VALUES ($1, $2, $3, 'MAIN_ADMIN', TRUE, TRUE)
+                 ON CONFLICT (email) DO NOTHING`,
+                [adminEmail, initialAdminPassword, adminName]
+            ).catch((e) => console.error('Error seeding admin user:', e.message));
+
 await pool.query(`
                 CREATE TABLE IF NOT EXISTS otp_store (
                     email TEXT PRIMARY KEY,
