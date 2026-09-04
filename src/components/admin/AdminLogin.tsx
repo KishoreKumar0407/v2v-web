@@ -67,8 +67,10 @@ if (!response.ok) throw new Error(result.error || 'Authentication failed');
                 navigate('/admin-dashboard');
             }
         } catch (err) {
-            setError(err instanceof Error ? err.message : String(err));
-        } finally {
+            const msg = err instanceof Error ? err.message : String(err);
+            setError(`${msg} (Target URL: ${endpoint})`);
+        }
+ finally {
             setLoading(false);
         }
     };
