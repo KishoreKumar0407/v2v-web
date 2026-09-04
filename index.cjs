@@ -15,19 +15,12 @@ const PORT = process.env.PORT || 3001;
 const isProduction = process.env.NODE_ENV === 'production';
 const authSecret = process.env.AUTH_SECRET || 'v2v-default-auth-secret-key-2026';
 
-const frontendUrl = process.env.FRONTEND_URL || process.env.RENDER_EXTERNAL_URL || '*';
-const allowedOrigins = frontendUrl === '*' ? '*' : frontendUrl.split(',').map((origin) => origin.trim()).filter(Boolean);
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-const corsOptions = {
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins === '*' || allowedOrigins.includes(origin)) return callback(null, true);
-        return callback(new Error('Origin is not allowed by CORS'));
-    },
-    credentials: false,
-    optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));

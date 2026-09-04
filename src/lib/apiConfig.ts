@@ -1,8 +1,10 @@
-const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+const rawUrl = import.meta.env.VITE_API_URL?.trim() || '';
+const configuredApiUrl = rawUrl.replace(/\/$/, '');
 
 const API_BASE_URL =
 	configuredApiUrl ||
 	(import.meta.env.DEV ? 'http://localhost:3001' : typeof window !== 'undefined' ? window.location.origin : '');
+
 
 
 const getAuthHeaders = (): Record<string, string> => {
