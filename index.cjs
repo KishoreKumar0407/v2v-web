@@ -6,27 +6,21 @@ const pool = require('./db-adapter.cjs');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
+const path = require('path');
+const fs = require('fs');
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const isProduction = process.env.NODE_ENV === 'production';
-const authSecret = process.env.AUTH_SECRET || (isProduction ? null : crypto.randomBytes(32).toString('hex'));
+const authSecret = process.env.AUTH_SECRET || 'v2v-default-auth-secret-key-2026';
 
-if (isProduction && !process.env.FRONTEND_URL) {
-    throw new Error('FRONTEND_URL is required in production.');
-}
-if (!authSecret) {
-    throw new Error('AUTH_SECRET is required in production.');
-}
+const frontendUrl = process.env.FRONTEND_URL || process.env.RENDER_EXTERNAL_URL || '*';
+const allowedOrigins = frontendUrl === '*' ? '*' : frontendUrl.split(',').map((origin) => origin.trim()).filter(Boolean);
 
-const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean);
 const corsOptions = {
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+        if (!origin || allowedOrigins === '*' || allowedOrigins.includes(origin)) return callback(null, true);
         return callback(new Error('Origin is not allowed by CORS'));
     },
     credentials: false,
@@ -34,6 +28,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -1268,6 +1263,18 @@ app.delete('/api/footer-services/:id', async (req, res) => {
 const { registerManagerRoutes } = require('./managers.cjs');
 registerManagerRoutes(app, pool, { requireAdminUser, requireMainAdmin, isTruthy });
 
+// Serve static frontend files from dist directory in production
+const distPath = path.join(__dirname, 'dist');
+if (fs.existsSync(distPath)) {
+    app.use(express.static(distPath));
+    app.use((req, res, next) => {
+        if (req.path.startsWith('/api')) return next();
+        res.sendFile(path.join(distPath, 'index.html'));
+    });
+}
+
+
+
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`V2V Server running on port ${PORT}`);
@@ -1275,3 +1282,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
+
