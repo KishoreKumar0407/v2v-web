@@ -470,8 +470,22 @@ const AdminDashboard = ({ focusSection = 'all' }: { focusSection?: 'all' | 'blog
                 body: JSON.stringify(blogForm)
             });
             const d = await r.json();
-            if (d.message === 'success') { setBlogMsg(editingBlog ? '✅ Blog updated!' : '✅ Blog published!'); fetchBlogs(); setTimeout(() => setShowBlogForm(false), 1200); toast.showToast('✅ Blog saved', 'success'); }
-            else { setBlogMsg('❌ Error: ' + d.error); toast.showToast('❌ Error: ' + d.error, 'error'); }
+            if (d.message === 'success') {
+                setBlogMsg(editingBlog ? '✅ Blog updated!' : '✅ Blog published!');
+                fetchBlogs();
+                setTimeout(() => setShowBlogForm(false), 1200);
+                toast.showToast('✅ Blog saved', 'success');
+            } else {
+                if (r.status === 403 && d.error && d.error.includes('Unauthorized access')) {
+                    localStorage.removeItem('admin_session');
+                    localStorage.removeItem('admin_user');
+                    toast.showToast('Session expired. Please log in again.', 'error');
+                    setTimeout(() => navigate('/admin-login'), 1500);
+                    return;
+                }
+                setBlogMsg('❌ Error: ' + d.error);
+                toast.showToast('❌ Error: ' + d.error, 'error');
+            }
         } catch (e) { setBlogMsg('❌ Server error'); }
         setBlogSaving(false);
     };

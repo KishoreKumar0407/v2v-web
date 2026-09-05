@@ -84,8 +84,8 @@ const getUserFromSessionToken = async (token) => {
     if (signature.length !== expectedSignature.length || !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) return null;
     try {
         const session = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
-        if (!session.id || !session.email || session.expiresAt < Date.now()) return null;
-        const result = await pool.query('SELECT * FROM admin_users WHERE id = $1 AND email = $2', [session.id, session.email]);
+        if (!session.email || session.expiresAt < Date.now()) return null;
+        const result = await pool.query('SELECT * FROM admin_users WHERE email = $1', [session.email]);
         return result.rows[0] || null;
     } catch {
         return null;
