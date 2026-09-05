@@ -171,15 +171,24 @@ if (!response.ok) throw new Error(result.error || 'Authentication failed');
                         <form onSubmit={handleLoginRegister} className="space-y-4">
                             {mode === 'register' && (
                                 <Input
+                                    id="register-name"
+                                    name="name"
+                                    autoComplete="name"
                                     type="text" placeholder="Full Name" value={name}
                                     onChange={(e) => setName(e.target.value)} required
                                 />
                             )}
                             <Input
+                                id="login-email"
+                                name="email"
+                                autoComplete="email"
                                 type="email" placeholder="Email" value={email}
                                 onChange={(e) => setEmail(e.target.value)} required
                             />
                             <Input
+                                id="login-password"
+                                name="password"
+                                autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
                                 type="password" placeholder="Password" value={password}
                                 onChange={(e) => setPassword(e.target.value)} required
                             />
@@ -209,6 +218,9 @@ if (!response.ok) throw new Error(result.error || 'Authentication failed');
                     {mode === 'forgot-request' && (
                         <form onSubmit={handleForgotPasswordRequest} className="space-y-4">
                             <Input
+                                id="forgot-email"
+                                name="email"
+                                autoComplete="email"
                                 type="email" placeholder="Enter valid admin email" value={email}
                                 onChange={(e) => setEmail(e.target.value)} required
                             />
@@ -225,14 +237,23 @@ if (!response.ok) throw new Error(result.error || 'Authentication failed');
                     {mode === 'forgot-verify' && (
                         <form onSubmit={handleResetPassword} className="space-y-4">
                             <Input
+                                id="otp-input"
+                                name="otp"
+                                autoComplete="one-time-code"
                                 type="text" placeholder="Enter OTP" value={otp}
                                 onChange={(e) => setOtp(e.target.value)} required
                             />
                             <Input
+                                id="new-password"
+                                name="newPassword"
+                                autoComplete="new-password"
                                 type="password" placeholder="New Password" value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)} required
                             />
                             <Input
+                                id="confirm-password"
+                                name="confirmPassword"
+                                autoComplete="new-password"
                                 type="password" placeholder="Confirm Password" value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)} required
                             />

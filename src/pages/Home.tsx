@@ -756,6 +756,9 @@ const ContactSection = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <Input
+                      id="contact-name"
+                      name="name"
+                      autoComplete="name"
                       placeholder="Your Name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -764,6 +767,9 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <Input
+                      id="contact-email"
+                      name="email"
+                      autoComplete="email"
                       type="email"
                       placeholder="Your Email"
                       value={formData.email}
@@ -773,6 +779,8 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <Textarea
+                      id="contact-message"
+                      name="message"
                       placeholder="Your Message"
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
