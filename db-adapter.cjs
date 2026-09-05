@@ -191,19 +191,17 @@ await pool.query(`
             await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS created_by TEXT DEFAULT ''`);
             await pool.query(`ALTER TABLE projects ADD COLUMN IF NOT EXISTS created_by_email TEXT DEFAULT ''`);
             const coreUpdates = [
-                { email: 'arunsekar.v2v@gmail.com', name: 'Arun Sekar', role: 'MAIN_ADMIN', blogs: true, experiments: true },
-                { email: 'jbavanieswaran.v2v@gmail.com', name: 'Bavanieswaran J', role: 'CO_FOUNDER', blogs: false, experiments: false },
-                { email: 'sivagurunathan.v2v@gmail.com', name: 'Sivagurunathan', role: 'CO_FOUNDER', blogs: false, experiments: false },
-                { email: 'sivaramireddy.v2v@gmail.com', name: 'Siva Rami Reddy', role: 'CO_FOUNDER', blogs: false, experiments: false },
-                { email: 'mareeswaran.v2v@gmail.com', name: 'Mareeswaran V', role: 'CO_FOUNDER', blogs: false, experiments: false },
-                { email: 'phravin.v2v@gmail.com', name: 'Phravin S', role: 'CO_FOUNDER', blogs: false, experiments: false }
+                { email: 'arunsekar.v2v@gmail.com', name: 'Arun Sekar', role: 'MAIN_ADMIN', blogs: true, experiments: true, image: '/team/arun.jpg' },
+                { email: 'jbavanieswaran.v2v@gmail.com', name: 'Bavanieswaran J', role: 'CO_FOUNDER', blogs: false, experiments: false, image: '/team/bavanies.jpg' },
+                { email: 'sivagurunathan.v2v@gmail.com', name: 'Sivagurunathan', role: 'CO_FOUNDER', blogs: false, experiments: false, image: '/team/sivagurunathan.jpg' },
+                { email: 'sivaramireddy.v2v@gmail.com', name: 'Siva Rami Reddy', role: 'CO_FOUNDER', blogs: false, experiments: false, image: '/team/sivarami.jpg' },
+                { email: 'mareeswaran.v2v@gmail.com', name: 'Mareeswaran V', role: 'CO_FOUNDER', blogs: false, experiments: false, image: '/team/Mareeswaran.jpg' },
+                { email: 'phravin.v2v@gmail.com', name: 'Phravin S', role: 'CO_FOUNDER', blogs: false, experiments: false, image: '/team/phravin.jpg' }
             ];
             for (const u of coreUpdates) {
-                const img = ['arunsekar.v2v@gmail.com', 'sivagurunathan.v2v@gmail.com', 'jbavanieswaran.v2v@gmail.com', 'sivaramireddy.v2v@gmail.com', 'mareeswaran.v2v@gmail.com', 'phravin.v2v@gmail.com']
-                    .includes(u.email) ? `/team/${u.email.split('.')[0]}.jpg` : '';
                 await pool.query(
                     'UPDATE admin_users SET name = $1, role = $2, image = $3, can_manage_blogs = $4, can_manage_experiments = $5 WHERE email = $6',
-                    [u.name, u.role, img, u.blogs, u.experiments, u.email]
+                    [u.name, u.role, u.image, u.blogs, u.experiments, u.email]
                 );
             }
             // Create and seed faqs table for Postgres

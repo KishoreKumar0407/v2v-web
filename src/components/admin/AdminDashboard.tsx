@@ -421,7 +421,9 @@ const AdminDashboard = ({ focusSection = 'all' }: { focusSection?: 'all' | 'blog
     const fetchMessages = async () => {
         setRefreshing(true);
         try {
-            const r = await fetch(`${API_BASE_URL}/api/messages`);
+            const r = await fetch(`${API_BASE_URL}/api/messages`, {
+                headers: getAuthHeaders()
+            });
             const d = await r.json();
             if (d.data) setMessages(d.data);
         } catch (e) { console.error(e); }
@@ -603,9 +605,9 @@ const AdminDashboard = ({ focusSection = 'all' }: { focusSection?: 'all' | 'blog
     const canManageProjects = (isMainAdmin || isTruthy(user?.can_manage_experiments) || isTruthy(user?.experiment_manager)) && (focusSection === 'all' || focusSection === 'experiments');
     const isWebsiteManager = canManageBlogs;
     const isProjectHead = canManageProjects;
-    const currentMember = teamMembers.find(m => m.email === user?.email);
+    const currentMember = teamMembers.find(m => m.email?.toLowerCase() === user?.email?.toLowerCase());
     const hasOwnProfileImage = !!user?.image && user.image.trim() !== '';
-    const displayProfileImage = hasOwnProfileImage ? user.image : (user && !hasOwnProfileImage && user.image === undefined ? currentMember?.image : '');
+    const displayProfileImage = hasOwnProfileImage ? user.image : (currentMember?.image || '');
 
     if (loading) return <div className="flex justify-center items-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>;
     if (!user) return <Navigate to="/admin-login" replace />;
