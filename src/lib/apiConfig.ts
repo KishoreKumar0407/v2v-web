@@ -10,6 +10,8 @@ const API_BASE_URL =
 const getAuthHeaders = (): Record<string, string> => {
 	if (typeof localStorage === 'undefined') return {};
 	try {
+		const storedSession = localStorage.getItem('admin_session')?.trim();
+		if (storedSession) return { Authorization: `Bearer ${storedSession}` };
 		const user = JSON.parse(localStorage.getItem('admin_user') || 'null');
 		return user?.session_token ? { Authorization: `Bearer ${user.session_token}` } : {};
 	} catch {

@@ -62,8 +62,11 @@ if (!response.ok) throw new Error(result.error || 'Authentication failed');
                 setMode('login');
                 setSuccess("Account created! Please login.");
             } else {
-                // Store user info for dashboard
                 localStorage.setItem('admin_user', JSON.stringify(result.data));
+                const resData = result.data as { session_token?: string } | undefined;
+                if (resData?.session_token) {
+                    localStorage.setItem('admin_session', resData.session_token);
+                }
                 navigate('/admin-dashboard');
             }
         } catch (err) {
