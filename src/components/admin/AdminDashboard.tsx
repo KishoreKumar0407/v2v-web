@@ -16,7 +16,7 @@ import FAQManager from "./FAQManager";
 import ServicesManager from "./ServicesManager";
 
 interface ContactMessage { id: number; created_at: string; name: string; email: string; message: string; }
-interface AdminUser { id: number; name: string; email: string; role: string; image?: string; can_manage_blogs: boolean; can_manage_experiments: boolean; blog_granted_by?: string; experiment_granted_by?: string; blog_manager?: boolean; experiment_manager?: boolean; }
+interface AdminUser { id: number; name: string; email: string; role: string; image?: string; session_token?: string; can_manage_blogs: boolean; can_manage_experiments: boolean; blog_granted_by?: string; experiment_granted_by?: string; blog_manager?: boolean; experiment_manager?: boolean; }
 interface Blog { id: number; title: string; description: string; content: string; image: string; category: string; author: string; published_at: string; }
 interface PendingRegistration { id: number; name: string; email: string; requested_at: string; }
 interface ManagerAccessRequest {
