@@ -400,7 +400,8 @@ app.post('/api/reset-password', async (req, res) => {
 app.get('/api/me', async (req, res) => {
     const user = await requireAdminUser(req, res);
     if (!user) return;
-    res.json({ message: 'success', data: formatUserResponse(user) });
+    const token = req.headers.authorization ? req.headers.authorization.slice(7) : createSessionToken(user);
+    res.json({ message: 'success', data: { ...formatUserResponse(user), session_token: token } });
 });
 
 // ==================== ADMIN-GATED REGISTRATION ====================

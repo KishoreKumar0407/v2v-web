@@ -101,9 +101,11 @@ const AdminDashboard = ({ focusSection = 'all' }: { focusSection?: 'all' | 'blog
                 });
                 const d = await r.json();
                 if (d.data) {
-                    activeUser = d.data;
-                    setUser(d.data);
-                    localStorage.setItem('admin_user', JSON.stringify(d.data));
+                    const token = d.data.session_token || activeUser.session_token || '';
+                    const updatedUser = { ...d.data, session_token: token };
+                    activeUser = updatedUser;
+                    setUser(updatedUser);
+                    localStorage.setItem('admin_user', JSON.stringify(updatedUser));
                 } else {
                     setUser(activeUser);
                 }
